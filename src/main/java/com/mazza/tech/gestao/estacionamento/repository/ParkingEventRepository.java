@@ -1,0 +1,16 @@
+package com.mazza.tech.gestao.estacionamento.repository;
+
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.mazza.tech.gestao.estacionamento.entity.ParkingEvent;
+
+@Repository
+public interface ParkingEventRepository extends JpaRepository<ParkingEvent, Long> {
+
+    Optional<ParkingEvent> findTopByLicensePlateOrderByIdDesc(String licensePlate);
+    Optional<ParkingEvent> findTopByLicensePlateAndExitTimeIsNullOrderByIdDesc(String licensePlate);
+
+}

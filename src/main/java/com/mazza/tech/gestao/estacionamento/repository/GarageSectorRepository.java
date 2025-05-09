@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.mazza.tech.gestao.estacionamento.entity.GarageSector;
 
 @Repository
-public interface GarageSectorRepository extends JpaRepository<GarageSector, String> {}
+public interface GarageSectorRepository extends JpaRepository<GarageSector, Long> {}
 
 
 
