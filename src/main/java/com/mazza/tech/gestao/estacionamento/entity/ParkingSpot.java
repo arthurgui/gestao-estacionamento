@@ -38,5 +38,13 @@ public class ParkingSpot {
 	    private LocalTime availableFrom;  // Horário de início de disponibilidade
 	    private LocalTime availableTo;  // Horário de término de disponibilidade
 	    private Duration maxDuration;
+	    
+	    public boolean isOccupied() {
+	        return occupied;
+	    }
+
+	    public void setOccupied(boolean occupied) {
+	        this.occupied = occupied;
+	    }
 }
 

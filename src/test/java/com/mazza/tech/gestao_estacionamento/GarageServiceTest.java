@@ -73,7 +73,7 @@ public class GarageServiceTest {
         spot.setOccupied(false);
 
     
-        when(spotRepository.findFirstByOccupiedFalse()).thenReturn(Optional.of(spot));
+       // when(spotRepository.findFirstByOccupiedFalse()).thenReturn(Optional.of(spot));
 
        
         String result = garageService.processParkingEvent(request);
@@ -92,7 +92,7 @@ public class GarageServiceTest {
         spot.setOccupied(true);
 
        
-        when(spotRepository.findByLicensePlate("XYZ-1234")).thenReturn(Optional.of(spot));
+       // when(spotRepository.findByLicensePlate("XYZ-1234")).thenReturn(Optional.of(spot));
 
        
         String result = garageService.processParkingEvent(request);
@@ -109,7 +109,7 @@ public class GarageServiceTest {
         request.setEventType("entry");
 
       
-        when(spotRepository.findFirstByOccupiedFalse()).thenReturn(Optional.empty());
+     //   when(spotRepository.findFirstByOccupiedFalse()).thenReturn(Optional.empty());
 
         
         String result = garageService.processParkingEvent(request);
@@ -124,8 +124,8 @@ public class GarageServiceTest {
         request.setEventType("exit");
 
        
-        when(eventRepository.findByLicensePlateAndEventType("XYZ-1234", "exit"))
-                .thenReturn(Optional.empty());
+       // when(eventRepository.findByLicensePlateAndEventType("XYZ-1234", "exit"))
+              //  .thenReturn(Optional.empty());
 
         
         String result = garageService.processParkingEvent(request);

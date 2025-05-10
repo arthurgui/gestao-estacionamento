@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mazza.tech.gestao.estacionamento.dto.ParkingEventRequest;
 import com.mazza.tech.gestao.estacionamento.dto.WebhookEventDTO;
+import com.mazza.tech.gestao.estacionamento.service.GarageService;
 import com.mazza.tech.gestao.estacionamento.service.ParkingService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,19 @@ import lombok.RequiredArgsConstructor;
 public class WebhookController {
 
     private final ParkingService parkingService;
+    
+    private final GarageService garageService;
+    
+    @PostMapping("/entry")
+    public ResponseEntity<String> entry(@RequestBody ParkingEventRequest request) {
+        return ResponseEntity.ok(garageService.processParkingEvent(request));
+    }
 
+    @PostMapping("/exit")
+    public ResponseEntity<String> exit(@RequestBody ParkingEventRequest request) {
+        return ResponseEntity.ok(garageService.processParkingEvent(request));
+    }
+    
     @PostMapping
     public ResponseEntity<Void> handleEvent(@RequestBody WebhookEventDTO event) {
         switch (event.getType()) {
