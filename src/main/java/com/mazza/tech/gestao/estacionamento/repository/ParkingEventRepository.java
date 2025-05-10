@@ -11,6 +11,7 @@ import com.mazza.tech.gestao.estacionamento.entity.ParkingEvent;
 public interface ParkingEventRepository extends JpaRepository<ParkingEvent, Long> {
 
     Optional<ParkingEvent> findTopByLicensePlateOrderByIdDesc(String licensePlate);
+    ParkingEvent findByLicensePlate(String licensePlate); //consulta baseado na placa do veículo
     Optional<ParkingEvent> findTopByLicensePlateAndExitTimeIsNullOrderByIdDesc(String licensePlate);
 
 }

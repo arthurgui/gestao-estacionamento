@@ -1,7 +1,5 @@
 package com.mazza.tech.gestao.estacionamento.entity;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,17 +8,11 @@ import lombok.Data;
 
 @Data
 @Entity
-public class VehicleEvent {
+public class Sector {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String plate;
-    private String eventType; 
-    private String sector;
-    private String licensePlate;
-    private LocalDateTime timestamp;
-
-
-  
+    private String name;
+    private String location;
 }

@@ -1,59 +1,34 @@
 package com.mazza.tech.gestao.estacionamento.entity;
 
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
+import lombok.Data;
+@Data
 @Entity
 public class ParkingSpot {
-    @Id @GeneratedValue
-    private Long id;
-    private Double lat;
-    private Double lng;
-    private Boolean occupied;
+	   @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    private Long id;
 
-    public Long getId() {
-		return id;
-	}
+	    private Double lat;
+	    private Double lng;
+	    private boolean occupied;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+	    @ManyToOne
+	    @JoinColumn(name = "sector_id")
+	    private GarageSector sector;
 
-	public Double getLat() {
-		return lat;
-	}
-
-	public void setLat(Double lat) {
-		this.lat = lat;
-	}
-
-	public Double getLng() {
-		return lng;
-	}
-
-	public void setLng(Double lng) {
-		this.lng = lng;
-	}
-
-	public Boolean getOccupied() {
-		return occupied;
-	}
-
-	public void setOccupied(Boolean occupied) {
-		this.occupied = occupied;
-	}
-
-	public GarageSector getSector() {
-		return sector;
-	}
-
-	public void setSector(GarageSector sector) {
-		this.sector = sector;
-	}
-
-	@ManyToOne
-    private GarageSector sector;
+	    private BigDecimal price;  // Preço da vaga
+	    private LocalTime availableFrom;  // Horário de início de disponibilidade
+	    private LocalTime availableTo;  // Horário de término de disponibilidade
+	    private Duration maxDuration;
 }
 
