@@ -5,19 +5,22 @@ import java.util.List;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mazza.tech.gestao.estacionamento.dto.ParkingEventRequest;
+import com.mazza.tech.gestao.estacionamento.entity.ParkingEvent;
 import com.mazza.tech.gestao.estacionamento.entity.VehicleEvent;
+import com.mazza.tech.gestao.estacionamento.repository.ParkingEventRepository;
 import com.mazza.tech.gestao.estacionamento.service.GarageService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/garage")
+@RequestMapping("/garage")
 @Tag(name = "Garage API", description = "Operações de controle da garagem")
 public class GarageController {
 
@@ -26,11 +29,16 @@ public class GarageController {
     @Autowired
     private ProducerTemplate producerTemplate;
 
+    @Autowired
     private final GarageService garageService;
     
+    private final ParkingEventRepository eventRepository;
+    
     @Autowired
-    public GarageController(GarageService garageService) {
+    public GarageController(GarageService garageService, ParkingEventRepository eventRepository) {
         this.garageService = garageService;
+		this.eventRepository = null;
+
     }
     
 
@@ -41,17 +49,15 @@ public class GarageController {
     }
     
     @PostMapping("/entry")
-    public ResponseEntity<String> entry(@RequestBody ParkingEventRequest request) {
-        request.setEventType("entry"); 
-        String response = garageService.processParkingEvent(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Void> entry(@RequestBody ParkingEventRequest request) {
+        garageService.processEntry(request.getLicensePlate());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/exit")
-    public ResponseEntity<String> exit(@RequestBody ParkingEventRequest request) {
-        request.setEventType("exit"); 
-        String response = garageService.processParkingEvent(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Void> exit(@RequestBody ParkingEventRequest request) {
+        garageService.processExit(request.getLicensePlate());
+        return ResponseEntity.ok().build();
     }
     
     @PostMapping
@@ -70,5 +76,11 @@ public class GarageController {
     public void receiveVehicleEvents(@RequestBody List<VehicleEvent> events) {
         log.info("Recebido lote de eventos de veículos: {} eventos", events.size());
         producerTemplate.sendBody("direct:processBatchVehicleEvents", events);
+    }
+    
+    @GetMapping("/vehicles/active")
+    public ResponseEntity<List<ParkingEvent>> getActiveVehicles() {
+        List<ParkingEvent> activeVehicles = eventRepository.findByEventType("entry");
+        return ResponseEntity.ok(activeVehicles);
     }
 }
