@@ -1,5 +1,6 @@
 package com.mazza.tech.gestao_estacionamento.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -10,9 +11,11 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,6 +30,7 @@ import com.mazza.tech.gestao.estacionamento.entity.ParkingSpot;
 import com.mazza.tech.gestao.estacionamento.repository.GarageSectorRepository;
 import com.mazza.tech.gestao.estacionamento.repository.ParkingSpotRepository;
 import com.mazza.tech.gestao.estacionamento.service.GarageImportService;
+import com.mazza.tech.gestao.estacionamento.service.GarageService;
 
 @SpringBootTest
 public class GarageImportServiceTest {
@@ -34,6 +38,8 @@ public class GarageImportServiceTest {
     @Mock
     private RestTemplate restTemplate;
 
+    private GarageService garageService;
+    
     @Mock
     private GarageSectorRepository sectorRepository;
 
@@ -43,6 +49,12 @@ public class GarageImportServiceTest {
     @InjectMocks
     private GarageImportService garageImportService;
 
+    @BeforeEach
+    void setUp() {
+        garageService = new GarageService(null, sectorRepository, spotRepository);
+    }
+    
+    
     @Test
     public void testImportGarageData() {
         SpotDTO spotDTO = new SpotDTO();
@@ -68,5 +80,23 @@ public class GarageImportServiceTest {
         
         verify(sectorRepository, times(1)).save(any(GarageSector.class));
         verify(spotRepository, times(1)).save(any(ParkingSpot.class));
+    }
+    
+    @Test
+    void testCalculateDynamicPriceLowOccupancy() {
+        GarageSector sector = new GarageSector();
+        sector.setBasePrice(new BigDecimal("10.00"));
+
+        List<ParkingSpot> spots = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            ParkingSpot spot = new ParkingSpot();
+            spot.setOccupied(i < 1); // 1 vaga ocupada = 10%
+            spots.add(spot);
+        }
+
+        sector.setSpots(spots);
+
+        BigDecimal dynamicPrice = garageService.calculateDynamicPrice(sector);
+        assertEquals(new BigDecimal("9.00"), dynamicPrice); // 10% de desconto
     }
 }

@@ -6,10 +6,19 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class ParkingEvent {
     @Id @GeneratedValue
@@ -26,6 +35,11 @@ public class ParkingEvent {
     @ManyToOne
     private ParkingSpot spot;
 
+    @ManyToOne
+    @JoinColumn(name = "sector_id")
+    private GarageSector sector;
+   
+    
     public BigDecimal calculateFee() {
     	return BigDecimal.valueOf(10.00);
     }
