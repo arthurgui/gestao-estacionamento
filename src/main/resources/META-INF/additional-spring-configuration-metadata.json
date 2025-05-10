@@ -8,89 +8,10 @@
     "name": "WRITE_DATES_AS_TIMESTAMPS",
     "type": "java.lang.String",
     "description": "A description for 'WRITE_DATES_AS_TIMESTAMPS'"
-  }
-]} "description": "A description for 'datasource'"
   },
   {
-    "name": "serialization",
+    "name": "garage.api.url",
     "type": "java.lang.String",
-    "description": "A description for 'serialization'"
-  }
-]} "description": "A description for 'datasource'"
-  },
-  {
-    "name": "jackson",
-    "type": "java.lang.String",
-    "description": "A description for 'jackson'"
-  }
-]} "description": "A description for 'datasource'"
-  },
-  {
-    "name": "database-platform",
-    "type": "java.lang.String",
-    "description": "A description for 'database-platform'"
-  }
-]} "description": "A description for 'datasource'"
-  },
-  {
-    "name": "show-sql",
-    "type": "java.lang.String",
-    "description": "A description for 'show-sql'"
-  }
-]} "description": "A description for 'datasource'"
-  },
-  {
-    "name": "ddl-auto",
-    "type": "java.lang.String",
-    "description": "A description for 'ddl-auto'"
-  }
-]} "description": "A description for 'datasource'"
-  },
-  {
-    "name": "jpa",
-    "type": "java.lang.String",
-    "description": "A description for 'jpa'"
-  }
-]} "description": "A description for 'datasource'"
-  },
-  {
-    "name": "hibernate",
-    "type": "java.lang.String",
-    "description": "A description for 'hibernate'"
-  }
-]} "description": "A description for 'datasource'"
-  },
-  {
-    "name": "password",
-    "type": "java.lang.String",
-    "description": "A description for 'password'"
-  }
-]} "description": "A description for 'datasource'"
-  },
-  {
-    "name": "url",
-    "type": "java.lang.String",
-    "description": "A description for 'url'"
-  }
-]} "description": "A description for 'datasource'"
-  },
-  {
-    "name": "username",
-    "type": "java.lang.String",
-    "description": "A description for 'username'"
-  }
-]} "description": "A description for 'datasource'"
-  },
-  {
-    "name": "username",
-    "type": "java.lang.String",
-    "description": "A description for 'username'"
-  }
-]} "description": "A description for 'datasource'"
-  },
-  {
-    "name": "url",
-    "type": "java.lang.String",
-    "description": "A description for 'url'"
+    "description": "A description for 'garage.api.url'"
   }
 ]}
