@@ -1,10 +1,11 @@
 package com.mazza.tech.gestao.estacionamento.dto;
 
 
-import lombok.Data;
 import java.math.BigDecimal;
-import java.time.LocalTime;
 import java.time.Duration;
+import java.time.LocalTime;
+
+import lombok.Data;
 
 @Data
 public class SpotDTO {

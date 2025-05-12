@@ -5,5 +5,7 @@ import lombok.Data;
 @Data
 public class ParkingEventRequest {
     private String licensePlate;
-    private String eventType; // "entry" ou "exit"
+    private String eventType;
+    private Long spotId;
+    private Long sectorId;
 }

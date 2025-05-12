@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 @Data
 @Getter
 @Setter
@@ -22,29 +23,30 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 public class ParkingSpot {
-	   @Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-	    private Double lat;
-	    private Double lng;
-	    private boolean occupied;
+	private Double lat;
+	private Double lng;
+	private boolean occupied;
 
-	    @ManyToOne
-	    @JoinColumn(name = "sector_id")
-	    private GarageSector sector;
+	@ManyToOne
+	@JoinColumn(name = "sector_id")
+	private GarageSector sector;
 
-	    private BigDecimal price;  // Preço da vaga
-	    private LocalTime availableFrom;  // Horário de início de disponibilidade
-	    private LocalTime availableTo;  // Horário de término de disponibilidade
-	    private Duration maxDuration;
-	    
-	    public boolean isOccupied() {
-	        return occupied;
-	    }
+	private BigDecimal price; // Preço da vaga
+	private LocalTime availableFrom; // Horário de início de disponibilidade
+	private LocalTime availableTo; // Horário de término de disponibilidade
+	private Duration maxDuration;
 
-	    public void setOccupied(boolean occupied) {
-	        this.occupied = occupied;
-	    }
+	// Métodos getters e setters
+	public boolean isOccupied() {
+		return this.occupied;
+	}
+
+	public void setOccupied(boolean occupied) {
+		this.occupied = occupied;
+	}
+
 }
-

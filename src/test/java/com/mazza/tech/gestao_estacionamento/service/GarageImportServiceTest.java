@@ -49,11 +49,11 @@ public class GarageImportServiceTest {
     @InjectMocks
     private GarageImportService garageImportService;
 
-    @BeforeEach
-    void setUp() {
-        garageService = new GarageService(null, sectorRepository, spotRepository);
-    }
-    
+//    @BeforeEach
+//    void setUp() {
+//        garageService = new GarageService(null, sectorRepository, spotRepository);
+//    }
+//    
     
     @Test
     public void testImportGarageData() {
