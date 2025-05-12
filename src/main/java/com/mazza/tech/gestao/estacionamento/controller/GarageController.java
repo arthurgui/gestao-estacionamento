@@ -38,7 +38,7 @@ public class GarageController {
 	@Autowired
 	public GarageController(GarageService garageService, ParkingEventRepository eventRepository) {
 		this.garageService = garageService;
-		this.eventRepository = null;
+		this.eventRepository = eventRepository;
 
 	}
 
@@ -76,9 +76,8 @@ public class GarageController {
 	}
 
 	@PostMapping("/event")
-	public ResponseEntity<Void> handleEvent(@RequestBody ParkingEventRequest request) {
-		garageService.processParkingEvent(request);
-		return ResponseEntity.ok().build();
+	public String processParkingEvent(@RequestBody ParkingEventRequest request) {
+	    return garageService.processParkingEvent(request);
 	}
 
 	@PostMapping("/batch")
