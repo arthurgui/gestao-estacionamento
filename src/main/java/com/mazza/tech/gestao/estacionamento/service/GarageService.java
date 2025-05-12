@@ -3,22 +3,25 @@ package com.mazza.tech.gestao.estacionamento.service;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.mazza.tech.gestao.estacionamento.dto.ParkingEventRequest;
 import com.mazza.tech.gestao.estacionamento.entity.GarageSector;
 import com.mazza.tech.gestao.estacionamento.entity.ParkingEvent;
 import com.mazza.tech.gestao.estacionamento.entity.ParkingSpot;
+import com.mazza.tech.gestao.estacionamento.entity.Vehicle;
 import com.mazza.tech.gestao.estacionamento.repository.GarageSectorRepository;
 import com.mazza.tech.gestao.estacionamento.repository.ParkingEventRepository;
 import com.mazza.tech.gestao.estacionamento.repository.ParkingSpotRepository;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +37,10 @@ public class GarageService {
 	private final ParkingEventRepository parkingEventRepository;
 	private boolean garageOpen = false;
 
+	// Mapa para armazenar veículos ativos na garagem
+	private final Map<String, Vehicle> activeVehicles = new ConcurrentHashMap<>();
+	private static final int MAX_CAPACITY = 100; // Exemplo de capacidade máxima da garagem
+
 	@Autowired
 	public GarageService(ParkingEventRepository eventRepository, ParkingSpotRepository spotRepository,
 			ParkingEventRepository parkingEventRepository) {
@@ -46,33 +53,46 @@ public class GarageService {
 	// Processa a entrada do veículo
 	@Transactional
 	public void processEntry(ParkingEventRequest request) {
-		if (request == null || request.getLicensePlate() == null || request.getLicensePlate().isBlank()) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "License plate is required.");
-		}
+	    if (request == null || request.getLicensePlate() == null || request.getLicensePlate().isBlank()) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "License plate is required.");
+	    }
 
-		if (isSectorFull()) {
-			throw new ResponseStatusException(HttpStatus.CONFLICT,
-					"Garage sector is full, cannot accept new vehicles until one leaves.");
-		}
+	    if (isSectorFull()) {
+	        throw new ResponseStatusException(HttpStatus.CONFLICT,
+	                "Garage sector is full, cannot accept new vehicles until one leaves.");
+	    }
 
-		ParkingSpot availableSpot = spotRepository.findFirstByOccupiedFalse();
-		if (availableSpot == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No available parking spots.");
-		}
+	    if (activeVehicles.size() >= MAX_CAPACITY) {
+	        throw new IllegalStateException("Garage sector is full, cannot accept new vehicles until one leaves.");
+	    }
 
-		updateParkingSpotStatus(availableSpot, true);
-		triggerGate(true);
+	    String licensePlate = request.getLicensePlate();
 
-		GarageSector sector = availableSpot.getSector();
-		BigDecimal price = calculateDynamicPrice(sector);
+	    
+	    Vehicle vehicle = new Vehicle();  
+	    vehicle.setLicensePlate(licensePlate); 
 
-		ParkingEvent event = new ParkingEvent();
-		event.setLicensePlate(request.getLicensePlate());
-		event.setEventType("entry");
-		event.setEntryTime(LocalDateTime.now());
-		event.setSector(sector);
-		event.setTotalValue(price);
-		eventRepository.save(event);
+	
+	    activeVehicles.put(licensePlate, vehicle);
+
+	    ParkingSpot availableSpot = spotRepository.findFirstByOccupiedFalse();
+	    if (availableSpot == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No available parking spots.");
+	    }
+
+	    updateParkingSpotStatus(availableSpot, true);
+	    triggerGate(true);
+
+	    GarageSector sector = availableSpot.getSector();
+	    BigDecimal price = calculateDynamicPrice(sector);
+
+	    ParkingEvent event = new ParkingEvent();
+	    event.setLicensePlate(licensePlate);
+	    event.setEventType("entry");
+	    event.setEntryTime(LocalDateTime.now());
+	    event.setSector(sector);
+	    event.setTotalValue(price);
+	    eventRepository.save(event);
 	}
 
 	// Processa a saída do veículo por placa
@@ -189,6 +209,24 @@ public class GarageService {
 
 	private void triggerAllGates(boolean open) {
 		System.out.println("Triggering gates. Open: " + open);
+	}
+
+	public void addVehicleToGarage(String licensePlate, String category) {
+		if (activeVehicles.size() >= MAX_CAPACITY) {
+			throw new IllegalStateException("Garage sector is full, cannot accept new vehicles until one leaves.");
+		}
+		Vehicle vehicle = new Vehicle(licensePlate, category);
+		activeVehicles.put(licensePlate, vehicle);
+	}
+
+	// Remove um veículo da garagem
+	public void removeVehicleFromGarage(String licensePlate) {
+		activeVehicles.remove(licensePlate);
+	}
+
+	// Lista todos os veículos ativos na garagem
+	public List<Vehicle> listAllVehicles() {
+		return new ArrayList<>(activeVehicles.values());
 	}
 
 	public String processParkingEvent(ParkingEventRequest request) {

@@ -7,16 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mazza.tech.gestao.estacionamento.dto.ParkingEventRequest;
 import com.mazza.tech.gestao.estacionamento.entity.ParkingEvent;
+import com.mazza.tech.gestao.estacionamento.entity.Vehicle;
 import com.mazza.tech.gestao.estacionamento.entity.VehicleEvent;
 import com.mazza.tech.gestao.estacionamento.repository.ParkingEventRepository;
 import com.mazza.tech.gestao.estacionamento.service.GarageService;
-
-import org.springframework.web.bind.annotation.RequestBody;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -50,15 +50,24 @@ public class GarageController {
 
 	@PostMapping("/entry")
 	public ResponseEntity<String> entry(@RequestBody ParkingEventRequest request) {
-		garageService.processEntry(request);
-		return ResponseEntity.ok("Entrada registrada com sucesso.");
+		garageService.addVehicleToGarage(request.getLicensePlate(), request.getCategory());
+		return ResponseEntity.ok("Vehicle entry recorded successfully.");
 	}
+	
+	   // Endpoint para registrar a saída do veículo
+    @PostMapping("/exit")
+    public ResponseEntity<String> exit(@RequestBody ParkingEventRequest request) {
+        garageService.removeVehicleFromGarage(request.getLicensePlate());
+        return ResponseEntity.ok("Vehicle exit recorded successfully.");
+    }
 
-	@PostMapping("/exit")
-	public ResponseEntity<String> exit(@RequestBody ParkingEventRequest request) {
-		garageService.processExitByLicensePlate(request.getLicensePlate());
-		return ResponseEntity.ok("Saída registrada com sucesso.");
-	}
+    // Endpoint para listar todos os veículos ativos na garagem
+    @GetMapping("/vehicles")
+    public ResponseEntity<List<Vehicle>> listVehicles() {
+        List<Vehicle> vehicles = garageService.listAllVehicles();
+        return ResponseEntity.ok(vehicles);
+    }
+
 
 	@PostMapping
 	public void receiveVehicleEvent(@RequestBody VehicleEvent event) {
@@ -83,4 +92,5 @@ public class GarageController {
 		List<ParkingEvent> activeVehicles = eventRepository.findByEventType("entry");
 		return ResponseEntity.ok(activeVehicles);
 	}
+
 }

@@ -8,4 +8,5 @@ public class ParkingEventRequest {
     private String eventType;
     private Long spotId;
     private Long sectorId;
+    private String category; 
 }
